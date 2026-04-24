@@ -4,7 +4,7 @@ import cors from "cors";
 import db from "./db.js";
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -77,6 +77,7 @@ app.get("/profiles", (req, res) => {
   res.json(profiles);
 });
 
-app.listen(PORT, () => {
+(async () => {
+  await app.listen(PORT);
   console.log(`Server listening on http://localhost:${PORT}`);
-});
+})();
