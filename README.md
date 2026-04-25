@@ -1,5 +1,7 @@
 # Clapo
 
+Track 3
+
 **Policy, personalized:** a profile plus policy text → plain-language, structured impact analysis powered by the Anthropic Messages API.
 
 > **Disclaimer:** Clapo is an educational / assistive tool. It does **not** provide legal, tax, or immigration advice. Verify outcomes with qualified professionals and official sources.
@@ -7,6 +9,7 @@
 ---
 
 ## Built with
+
 
 Clapo is built with **JavaScript** (ES modules and JSX), **React** and **Vite** on the frontend, and **Node.js** with **Express** on the backend. Profiles live in a file-based **SQLite** database via **better-sqlite3**; policy analysis calls the **Anthropic Messages API** over HTTPS using **axios**. The browser extracts **.docx** text with **Mammoth** and **.pdf** text with **pdf.js** (`pdfjs-dist`). Configuration uses **dotenv**; the API enables **CORS** for local development. Everything runs locally with **npm**—no cloud service is required for the core stack.
 
