@@ -9,7 +9,7 @@ const dir = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, dir, '')
   const proxyTarget =
-    env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:3001'
+    env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:8000'
 
   return {
     plugins: [react()],

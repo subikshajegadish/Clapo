@@ -1,6 +1,20 @@
 export const API_BASE = import.meta.env.VITE_API_BASE || "/api";
+export const DEMO_USER_ID = import.meta.env.VITE_DEMO_USER_ID || "demo-user";
+
+function parseErrorBody(raw) {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
 function formatApiError(status, body) {
+  const parsed = parseErrorBody(body);
+  const apiError = parsed?.error;
+  if (apiError && typeof apiError.message === "string" && apiError.message.trim()) {
+    return apiError.message.trim();
+  }
   const snippet = (body || "").replace(/\s+/g, " ").trim().slice(0, 180);
   if (status === 404 && (!snippet || snippet === "Not Found")) {
     return `Cannot reach API (${status}). Is the backend running, and is Vite's /api proxy configured? (${API_BASE})`;
@@ -11,18 +25,15 @@ function formatApiError(status, body) {
 const jsonHeaders = {
   Accept: "application/json",
   "Content-Type": "application/json",
-};
-const createProfileHeaders = {
-  ...jsonHeaders,
-  "x-clapo-intent": "create-profile",
+  "x-demo-user-id": DEMO_USER_ID,
 };
 
 /**
  * @returns {Promise<object[]>}
  */
 export async function getProfiles() {
-  const res = await fetch(`${API_BASE}/profiles`, {
-    headers: { Accept: "application/json" },
+  const res = await fetch(`${API_BASE}/profiles/`, {
+    headers: { Accept: "application/json", "x-demo-user-id": DEMO_USER_ID },
   });
   if (!res.ok) {
     const text = await res.text();
@@ -36,9 +47,9 @@ export async function getProfiles() {
  * @returns {Promise<object>}
  */
 export async function createProfile(data) {
-  const res = await fetch(`${API_BASE}/profiles`, {
+  const res = await fetch(`${API_BASE}/profiles/`, {
     method: "POST",
-    headers: createProfileHeaders,
+    headers: jsonHeaders,
     body: JSON.stringify(data),
   });
   if (!res.ok) {
@@ -54,7 +65,7 @@ export async function createProfile(data) {
  * @returns {Promise<object>}
  */
 export async function analyzePolicy(profile_id, policy_text) {
-  const res = await fetch(`${API_BASE}/analyze`, {
+  const res = await fetch(`${API_BASE}/analyze/`, {
     method: "POST",
     headers: jsonHeaders,
     body: JSON.stringify({ profile_id, policy_text }),
@@ -64,4 +75,63 @@ export async function analyzePolicy(profile_id, policy_text) {
     throw new Error(formatApiError(res.status, text));
   }
   return res.json();
+}
+
+/**
+ * @returns {Promise<object[]>}
+ */
+export async function getAnalyses() {
+  const res = await fetch(`${API_BASE}/analyses/`, {
+    headers: { Accept: "application/json", "x-demo-user-id": DEMO_USER_ID },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(formatApiError(res.status, text));
+  }
+  return res.json();
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<object>}
+ */
+export async function getAnalysis(id) {
+  const res = await fetch(`${API_BASE}/analyses/${id}/`, {
+    headers: { Accept: "application/json", "x-demo-user-id": DEMO_USER_ID },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(formatApiError(res.status, text));
+  }
+  return res.json();
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<void>}
+ */
+export async function deleteAnalysis(id) {
+  const res = await fetch(`${API_BASE}/analyses/${id}/`, {
+    method: "DELETE",
+    headers: { Accept: "application/json", "x-demo-user-id": DEMO_USER_ID },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(formatApiError(res.status, text));
+  }
+}
+
+/**
+ * @param {number} id
+ * @returns {Promise<void>}
+ */
+export async function deleteProfile(id) {
+  const res = await fetch(`${API_BASE}/profiles/${id}/`, {
+    method: "DELETE",
+    headers: { Accept: "application/json", "x-demo-user-id": DEMO_USER_ID },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(formatApiError(res.status, text));
+  }
 }

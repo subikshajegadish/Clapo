@@ -105,6 +105,34 @@
   gap: 0.75rem;
 }
 
+.profile-list-tabs {
+  margin-top: 1.25rem;
+  margin-bottom: 0.9rem;
+  display: inline-flex;
+  gap: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.2rem;
+  background: var(--bg);
+}
+
+.profile-list-tab {
+  font: inherit;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 0.42rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.profile-list-tab.is-active {
+  background: var(--accent-bg, #eef2ff);
+  color: var(--accent, #4338ca);
+  font-weight: 600;
+}
+
 .profile-card {
   width: 100%;
   text-align: left;

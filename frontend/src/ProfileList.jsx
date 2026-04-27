@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getProfiles } from "./api.js";
 import CreateProfile from "./CreateProfile.jsx";
 import Analyze from "./Analyze.jsx";
+import AnalysisHistory from "./AnalysisHistory.jsx";
 import "./ProfileList.css";
 
 /**
@@ -13,6 +14,7 @@ export default function ProfileList({ onCreateNew }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [activeTab, setActiveTab] = useState("analyze");
 
   const refreshProfiles = useCallback(() => {
     setLoading(true);
@@ -126,7 +128,33 @@ export default function ProfileList({ onCreateNew }) {
       </ul>
 
       {selectedProfile && (
-        <Analyze profileId={selectedProfile.id} key={selectedProfile.id} />
+        <>
+          <div className="profile-list-tabs" role="tablist" aria-label="Policy tools">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "analyze"}
+              className={"profile-list-tab" + (activeTab === "analyze" ? " is-active" : "")}
+              onClick={() => setActiveTab("analyze")}
+            >
+              Analyze Policy
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "history"}
+              className={"profile-list-tab" + (activeTab === "history" ? " is-active" : "")}
+              onClick={() => setActiveTab("history")}
+            >
+              History
+            </button>
+          </div>
+          {activeTab === "analyze" ? (
+            <Analyze profileId={selectedProfile.id} key={selectedProfile.id} />
+          ) : (
+            <AnalysisHistory />
+          )}
+        </>
       )}
     </section>
   );

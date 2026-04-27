@@ -1,0 +1,122 @@
+.analysis-history {
+  margin-top: 1.25rem;
+}
+
+.analysis-history-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-h);
+}
+
+.analysis-history-header p {
+  margin: 0.35rem 0 1rem;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.analysis-history-status {
+  margin: 0.5rem 0 1rem;
+  color: var(--text);
+}
+
+.analysis-history-status--error {
+  color: #b91c1c;
+}
+
+.analysis-history-empty {
+  margin: 0.75rem 0;
+  color: var(--text);
+}
+
+.analysis-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.analysis-history-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  background: var(--bg);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 5%);
+}
+
+.analysis-history-item--active {
+  border-color: var(--accent, #4338ca);
+  box-shadow: 0 0 0 1px var(--accent-bg, #eef2ff);
+}
+
+.analysis-history-top {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.analysis-history-top h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-h);
+  flex: 1 1 auto;
+}
+
+.analysis-history-impact {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.12rem 0.45rem;
+}
+
+.analysis-history-meta {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.7rem;
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.analysis-history-preview {
+  margin: 0.65rem 0 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.analysis-history-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.55rem;
+}
+
+.analysis-history-actions button {
+  font: inherit;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  border-radius: 8px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}
+
+.analysis-history-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.analysis-history-delete {
+  color: #b91c1c;
+}
+
+.analysis-history-result {
+  margin-top: 1.25rem;
+}
