@@ -10,6 +10,7 @@ const db = new Database(dbPath);
 db.exec(`
   CREATE TABLE IF NOT EXISTS profiles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    owner_user_id TEXT NOT NULL DEFAULT 'demo-user',
     name TEXT,
     age INTEGER,
     state TEXT,
@@ -29,5 +30,13 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `);
+
+const profileColumns = db.prepare("PRAGMA table_info(profiles)").all();
+const hasOwnerUserId = profileColumns.some((col) => col.name === "owner_user_id");
+if (!hasOwnerUserId) {
+  db.exec(
+    "ALTER TABLE profiles ADD COLUMN owner_user_id TEXT NOT NULL DEFAULT 'demo-user'"
+  );
+}
 
 export default db;

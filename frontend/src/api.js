@@ -12,6 +12,10 @@ const jsonHeaders = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
+const createProfileHeaders = {
+  ...jsonHeaders,
+  "x-clapo-intent": "create-profile",
+};
 
 /**
  * @returns {Promise<object[]>}
@@ -34,7 +38,7 @@ export async function getProfiles() {
 export async function createProfile(data) {
   const res = await fetch(`${API_BASE}/profiles`, {
     method: "POST",
-    headers: jsonHeaders,
+    headers: createProfileHeaders,
     body: JSON.stringify(data),
   });
   if (!res.ok) {
