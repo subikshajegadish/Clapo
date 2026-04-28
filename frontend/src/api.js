@@ -1,5 +1,7 @@
 export const API_BASE = import.meta.env.VITE_API_BASE || "/api";
 export const DEMO_USER_ID = import.meta.env.VITE_DEMO_USER_ID || "demo-user";
+export const GOOGLE_LOGIN_URL =
+  import.meta.env.VITE_GOOGLE_LOGIN_URL || `${API_BASE}/auth/google/login/`;
 
 function parseErrorBody(raw) {
   try {
@@ -129,6 +131,49 @@ export async function deleteProfile(id) {
   const res = await fetch(`${API_BASE}/profiles/${id}/`, {
     method: "DELETE",
     headers: { Accept: "application/json", "x-demo-user-id": DEMO_USER_ID },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(formatApiError(res.status, text));
+  }
+}
+
+/**
+ * @returns {Promise<{authenticated: boolean; user: {id?: string; email?: string; username?: string} | null}>}
+ */
+export async function getCurrentUser() {
+  const res = await fetch(`${API_BASE}/auth/me/`, {
+    headers: { Accept: "application/json" },
+    credentials: "include",
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(formatApiError(res.status, text));
+  }
+  const data = await res.json();
+  return {
+    authenticated: Boolean(data?.authenticated),
+    user: data?.user && typeof data.user === "object" ? data.user : null,
+  };
+}
+
+/**
+ * Returns backend Google OAuth start URL.
+ * TODO: Confirm exact provider start route once backend social login flow is finalized.
+ */
+export function getGoogleLoginUrl() {
+  return GOOGLE_LOGIN_URL;
+}
+
+/**
+ * @returns {Promise<void>}
+ */
+export async function logout() {
+  const res = await fetch(`${API_BASE}/auth/logout/`, {
+    method: "POST",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({}),
   });
   if (!res.ok) {
     const text = await res.text();

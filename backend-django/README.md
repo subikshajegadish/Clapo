@@ -2,6 +2,12 @@
 
 Clapo Django backend (DRF + CORS + dotenv + SQLite dev DB).
 
+## Auth foundation (OAuth-ready)
+
+This backend now includes OAuth foundation wiring via `django-allauth` + `dj-rest-auth`.
+Google OAuth credentials are optional at this stage and **not required** for local demo mode.
+Current local development can continue using `x-demo-user-id` fallback ownership.
+
 ## Setup
 
 ```bash
@@ -18,12 +24,17 @@ Set analyzer mode in `.env`:
 - `ANTHROPIC_MODEL=claude-sonnet-4-5` for primary model
 - `ANTHROPIC_MODEL_FALLBACK=` optional fallback model when primary model is not found
 - `ANTHROPIC_TIMEOUT_SECONDS=120` request timeout for Anthropic calls
+- `GOOGLE_CLIENT_ID=` optional for future Google OAuth login flow
+- `GOOGLE_CLIENT_SECRET=` optional for future Google OAuth login flow
+- `FRONTEND_URL=http://localhost:5173` frontend origin used by auth setup
 
 ## Migrate (SQLite dev DB)
 
 ```bash
 python manage.py migrate
 ```
+
+OAuth foundation adds Django auth/site tables via migrations. Run migrate after pulling backend updates.
 
 ## Run server
 
@@ -51,6 +62,12 @@ Health:
 
 ```bash
 curl http://127.0.0.1:8000/health/
+```
+
+Auth foundation status:
+
+```bash
+curl http://127.0.0.1:8000/auth/me/
 ```
 
 Create profile:

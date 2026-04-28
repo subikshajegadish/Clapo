@@ -2,3 +2,9 @@ django
 djangorestframework
 django-cors-headers
 python-dotenv
+django-allauth
+dj-rest-auth
+djangorestframework-simplejwt
+PyJWT
+requests
+cryptography

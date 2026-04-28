@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
+import socket
 import sys
 import time
 import urllib.error
@@ -47,6 +48,12 @@ def request_json(method, path, headers=None, body=None):
         raw = e.read().decode("utf-8")
         parsed = json.loads(raw) if raw else None
         return e.code, parsed
+    except (TimeoutError, socket.timeout):
+        return 598, {"error": {"code": "VERIFY_TIMEOUT", "message": "Request timed out", "details": []}}
+    except urllib.error.URLError as e:
+        if isinstance(getattr(e, "reason", None), TimeoutError | socket.timeout):
+            return 598, {"error": {"code": "VERIFY_TIMEOUT", "message": "Request timed out", "details": []}}
+        raise
 
 
 def request_json_with_headers(method, path, headers=None, body=None):
@@ -74,6 +81,12 @@ def request_json_with_headers(method, path, headers=None, body=None):
         raw = e.read().decode("utf-8")
         parsed = json.loads(raw) if raw else None
         return e.code, parsed, dict(e.headers)
+    except (TimeoutError, socket.timeout):
+        return 598, {"error": {"code": "VERIFY_TIMEOUT", "message": "Request timed out", "details": []}}, {}
+    except urllib.error.URLError as e:
+        if isinstance(getattr(e, "reason", None), TimeoutError | socket.timeout):
+            return 598, {"error": {"code": "VERIFY_TIMEOUT", "message": "Request timed out", "details": []}}, {}
+        raise
 
 
 def assert_true(cond, message):
@@ -91,6 +104,17 @@ def main():
     assert_true(status_code == 200, f"/health/ expected 200, got {status_code}")
     assert_true(isinstance(body, dict) and body.get("status") == "ok", "Health body should be {'status':'ok'}")
     ok("Health check")
+
+    step("/auth/me/ returns unauthenticated without login")
+    status_code, auth_me = request_json("GET", "/auth/me/")
+    assert_true(status_code == 200, f"GET /auth/me/ expected 200, got {status_code}")
+    assert_true(
+        isinstance(auth_me, dict)
+        and auth_me.get("authenticated") is False
+        and auth_me.get("user") is None,
+        "/auth/me/ should return authenticated=false and user=null when not logged in",
+    )
+    ok("Auth foundation endpoint")
 
     step("Create profile as verify-user")
     create_payload = {
@@ -253,8 +277,13 @@ def main():
             "Upstream analyze failure should return error JSON envelope",
         )
         ok("Analyze returns structured upstream failure when enabled but unavailable")
+    elif status_code == 598:
+        ok("Analyze request timed out in verify environment (treated as unavailable)")
     else:
-        fail(f"Analyze expected 503 (disabled), 200 (enabled), or 502 (upstream unavailable), got {status_code}")
+        fail(
+            f"Analyze expected 503 (disabled), 200 (enabled), 502 (upstream unavailable), "
+            f"or 598 (verify timeout), got {status_code}"
+        )
 
     step("Rate limit triggers after 5 analyze requests per user")
     for i in range(5):

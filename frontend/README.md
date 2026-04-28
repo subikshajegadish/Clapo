@@ -18,12 +18,20 @@ So these browser calls:
 - `/api/profiles/`
 - `/api/analyze/`
 - `/api/analyses/`
+- `/api/auth/me/`
 
 are forwarded to Django as:
 
 - `/profiles/`
 - `/analyze/`
 - `/analyses/`
+- `/auth/me/`
+
+By default, the app runs in demo mode using `x-demo-user-id`.
+If the browser has an authenticated backend session, the frontend auth status
+chip will display signed-in user info.
+Google login requires backend OAuth credentials/configuration. Without that,
+the app remains fully usable in demo mode.
 
 ## Run
 

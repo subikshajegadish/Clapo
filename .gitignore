@@ -3,6 +3,10 @@ node_modules/
 backend/.env
 frontend/.env
 frontend/.env.local
+backend-django/.env
+backend-django/.venv/
+__pycache__/
+*.pyc
 
 *.db
 dist/

@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .demo_user import get_demo_user_id
+from common.auth import get_current_owner_id
 from .errors import error_response
 from .models import Profile
 from .serializers import ProfileSerializer
@@ -11,13 +11,13 @@ from .serializers import ProfileSerializer
 
 class ProfilesListCreateView(APIView):
     def get(self, request):
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         queryset = Profile.objects.filter(owner_user_id=owner_user_id)
         serializer = ProfileSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         serializer = ProfileSerializer(data=request.data)
         if not serializer.is_valid():
             details = []
@@ -38,13 +38,13 @@ class ProfilesListCreateView(APIView):
 
 class ProfileDetailView(APIView):
     def get(self, request, profile_id: int):
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         profile = get_object_or_404(Profile, id=profile_id, owner_user_id=owner_user_id)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
     def delete(self, request, profile_id: int):
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         profile = get_object_or_404(Profile, id=profile_id, owner_user_id=owner_user_id)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

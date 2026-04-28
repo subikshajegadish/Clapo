@@ -16,7 +16,7 @@ from analysis.services import (
     analyze_policy,
     policy_hash,
 )
-from profiles.demo_user import get_demo_user_id
+from common.auth import get_current_owner_id
 from profiles.errors import error_response
 from profiles.models import Profile
 
@@ -42,7 +42,7 @@ class AnalyzeView(APIView):
 
         profile_id = serializer.validated_data["profile_id"]
         policy_text = serializer.validated_data["policy_text"]
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         rl_state = check_and_consume(owner_user_id)
         if not rl_state["allowed"]:
             log_warn(
@@ -165,7 +165,7 @@ class AnalyzeView(APIView):
 
 class AnalysesListView(APIView):
     def get(self, request):
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         queryset = AnalysisResult.objects.filter(owner_user_id=owner_user_id)
         serializer = AnalysisResultListSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -173,7 +173,7 @@ class AnalysesListView(APIView):
 
 class AnalysesDetailView(APIView):
     def get(self, request, analysis_id: int):
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         try:
             result = AnalysisResult.objects.get(id=analysis_id, owner_user_id=owner_user_id)
         except AnalysisResult.DoesNotExist:
@@ -182,7 +182,7 @@ class AnalysesDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, analysis_id: int):
-        owner_user_id = get_demo_user_id(request)
+        owner_user_id = get_current_owner_id(request)
         try:
             result = AnalysisResult.objects.get(id=analysis_id, owner_user_id=owner_user_id)
         except AnalysisResult.DoesNotExist:
